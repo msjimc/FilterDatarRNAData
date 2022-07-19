@@ -120,7 +120,7 @@ namespace FilterDatarRNAData
             catch (Exception ex)
             { MessageBox.Show("Could not read file" + "\n" + ex.Message, "Error"); }
             finally
-            { if (fr.BaseStream != null) { fr.Close(); } }
+            { if (fr != null) { fr.Close(); } }
 
         }
 
@@ -313,6 +313,11 @@ namespace FilterDatarRNAData
                 {
                     line = fr.ReadLine();
                     items = line.Split('\t');
+                    if (items.Length != 2)
+                    {
+                        MessageBox.Show("The file is incorrectly formated: Sample name<tab>index sequences");
+                        return;
+                    }
                     if (keys.ContainsKey(items[1].Trim()) == false)
                     {
                         keys.Add(items[1].Trim(), items[0].Trim());
@@ -374,11 +379,16 @@ namespace FilterDatarRNAData
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            cboTaxonomyName.SelectedIndex = 31 - 1;
+            
         }
 
         private void nudTaxonomyLevel_ValueChanged(object sender, EventArgs e)
         {
+            if (cboTaxonomyName.Items.Count == 0)
+            {
+                MessageBox.Show("There are no taxonomic levels listed, have you set the 'Taxonomic level of identity' option above?", "No taxonomic levels");
+                return;
+            }
             int value = (int)nudTaxonomyLevel.Value;
             cboTaxonomyName.SelectedIndex = value - 1;
             testImportSelection();
@@ -422,11 +432,15 @@ namespace FilterDatarRNAData
                 nudTaxonomyLevel.Minimum = 1;
                 cboTaxonomyName.Items.Clear();
                 int index = cboTaxonomyStart.SelectedIndex - 1;
-                for (int item = index; item < titleColumns.Length; item++)
-                { cboTaxonomyName.Items.Add(titleColumns[item]); }
-                nudTaxonomyLevel.Maximum = cboTaxonomyName.Items.Count;
-                nudTaxonomyLevel.Value = nudTaxonomyLevel.Maximum;
+                if (index == -1) { index = 0; }
+                else
+                {
+                    for (int item = index; item < titleColumns.Length; item++)
+                    { cboTaxonomyName.Items.Add(titleColumns[item]); }
+                    nudTaxonomyLevel.Maximum = cboTaxonomyName.Items.Count;
+                    nudTaxonomyLevel.Value = nudTaxonomyLevel.Maximum;
                 nudTaxonomyLevel.Enabled = true;
+                }
                 testImportSelection();
             }
             catch (Exception ex)
@@ -441,6 +455,14 @@ namespace FilterDatarRNAData
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void cboTaxonomyName_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboTaxonomyName.Items.Count == 0)
+            { nudTaxonomyLevel.Enabled = false; }
+            else
+            { nudTaxonomyLevel.Enabled = true; }
         }
     }
 }

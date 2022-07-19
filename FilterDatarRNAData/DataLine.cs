@@ -9,7 +9,6 @@ namespace FilterDatarRNAData
     {
         int[] counts = null;
         int NumberOfHits = 0;
-        //string[] otherData = null;
         string[] lineage = null;
         int sequenceLength = 0;
         Single percent = 0;
@@ -145,7 +144,7 @@ namespace FilterDatarRNAData
                     if (LibrarySizes[sample] > 0)
                     { answer += "\t" + ((Single)counts[sample] / LibrarySizes[sample]).ToString(); }
                     else
-                    { answer = "\t0"; }
+                    { answer += "\t0"; }
                 }
                 sample++;
             }
@@ -163,7 +162,7 @@ namespace FilterDatarRNAData
                     if (LibrarySizes[sample] > 0)
                     { answer += "\t" + ((Single)counts[sample] * 100 / LibrarySizes[sample]).ToString(); }
                     else
-                    { answer = "\t0"; }
+                    { answer += "\t0"; }
                 }
                 sample++;
             }
